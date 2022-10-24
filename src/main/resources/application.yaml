@@ -32,4 +32,4 @@ server:
 addresses:
   blackListing:
    enabled: true
-   retry: 3
+   retry: 0

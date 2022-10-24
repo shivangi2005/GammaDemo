@@ -10,11 +10,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import uk.co.gamma.address.ApplicationConfig;
+import uk.co.gamma.address.config.ApplicationConfig;
 import uk.co.gamma.address.exception.AddressNotFoundException;
 import uk.co.gamma.address.exception.BlackListServiceException;
 import uk.co.gamma.address.model.Address;
-import uk.co.gamma.address.model.Zone;
 import uk.co.gamma.address.service.AddressService;
 import uk.co.gamma.address.service.BlackListService;
 
