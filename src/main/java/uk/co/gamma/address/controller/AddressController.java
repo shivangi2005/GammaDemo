@@ -63,9 +63,7 @@ public class AddressController {
                 retry--;
                 return isBlackListed(postcode,retry);
             }
-
         }
-
     }
 
     @ApiResponse(responseCode = "200", description = "Address returned", content = @Content(schema = @Schema(implementation = Address.class)))

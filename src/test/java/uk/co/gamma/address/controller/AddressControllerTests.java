@@ -3,6 +3,7 @@ package uk.co.gamma.address.controller;
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.assertj.core.api.BDDAssertions.thenExceptionOfType;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -186,6 +187,23 @@ class AddressControllerTests {
         List<Address> actual = addressController.list("RG14 5BY");
 
         then(actual).isEmpty();
+    }
+
+    @DisplayName("list(postcode) - given invalid postcode, test multiple times to check exception" )
+    @Test
+    void list_when_invalidAddress_with3Retry() throws IOException, InterruptedException {
+        List<Zone> zones = List.of(new Zone( "rg14 5by"));
+
+        given(appConfig.isBlackListingEnabled()).willReturn(true);
+        given(appConfig.getRetry()).willReturn(3);
+
+        given(blackListService.getAll()).willThrow(IOException.class).willReturn(zones);
+
+        List<Address> actual = addressController.list("RG14 5BY");
+
+        then(actual).isEmpty();
+
+
     }
 
 

@@ -9,13 +9,17 @@
 # Task 2
 1. BlackListService throws IOException randomly/ service not in control of the solution scope
 2. One way of handling this is to introduce retry mechanism when we get exception
-3. Number of retries can be configured in properties file
-
+3. Number of retries is configured in properties file
+4. implement retry mechanism to call BlackListService
+5. write unit test case to test the functionality
 
 
 # Task 3
 1. Introduce Customer properties file and define customer specific variables to diff cust properties
-2. Add more test coverage
+2. Add more test coverage for edge/negative scenarios
 3. add integration tests
-4. 
+4. BlackListingCalling Service can be added to separate out calling mechanism with retry
+5. code can be refactored based on new service 
+6. list method can be refactored to make it more readable. 
+
 
