@@ -41,7 +41,7 @@ public class AddressController {
     @GetMapping
     public List<Address> list(@RequestParam(value = "postcode", required = false) String postcode) {
         if (StringUtils.isNotBlank(postcode) ) {
-            if(isBlackListed(postcode,applicationConfig.getRetry())){
+            if(applicationConfig.isBlackListingEnabled() && isBlackListed(postcode,applicationConfig.getRetry())){
                 return Collections.emptyList();
             } else {
                 return addressService.getByPostcode(postcode);
@@ -53,7 +53,7 @@ public class AddressController {
     private boolean isBlackListed(String postcode, int retry) {
         try {
             List<String>  zones = blackListService.getAll().stream().map(zone -> zone.getPostCode().toUpperCase()).toList();
-            return (applicationConfig.isBlackListingEnabled() && zones.contains(postcode.toUpperCase()));
+            return (zones.contains(postcode.toUpperCase()));
         } catch (Exception exception) {
             if(retry <= 0){
                 throw new BlackListServiceException(postcode);

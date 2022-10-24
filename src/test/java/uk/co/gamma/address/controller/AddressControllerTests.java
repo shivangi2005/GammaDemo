@@ -199,10 +199,6 @@ class AddressControllerTests {
         List<Address> actual = addressController.list("RG14 5BY");
 
         then(actual).isEmpty();
-
-
     }
-
-
 
 }
