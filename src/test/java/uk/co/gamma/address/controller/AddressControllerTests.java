@@ -3,7 +3,10 @@ package uk.co.gamma.address.controller;
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.assertj.core.api.BDDAssertions.thenExceptionOfType;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
 
+import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -13,8 +16,11 @@ import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.co.gamma.address.ApplicationConfig;
 import uk.co.gamma.address.exception.AddressNotFoundException;
+import uk.co.gamma.address.exception.BlackListServiceException;
 import uk.co.gamma.address.model.Address;
+import uk.co.gamma.address.model.Zone;
 import uk.co.gamma.address.service.AddressService;
 import uk.co.gamma.address.service.BlackListService;
 
@@ -26,6 +32,12 @@ class AddressControllerTests {
 
     @Mock
     private BlackListService blackListService;
+
+    @Mock
+    private ApplicationConfig appConfig;
+
+
+
 
     @InjectMocks
     private AddressController addressController;
@@ -128,4 +140,54 @@ class AddressControllerTests {
 
         BDDMockito.then(addressService).should().delete(1);
     }
+
+    @DisplayName("list(postcode) - Given postcode is invalid(configured), then the empty list is returned")
+    @Test
+    void list_when_invalidAddresses_then_emptyAddressesReturned() throws IOException, InterruptedException {
+
+        List<Zone> zones = List.of(new Zone( "RG14 5BY"));
+
+        given(appConfig.isBlackListingEnabled()).willReturn(true);
+
+        given(blackListService.getAll()).willReturn(zones);
+
+        List<Address> actual = addressController.list("RG14 5BY");
+
+        then(actual).isEmpty();
+    }
+
+    @DisplayName("list(postcode) - Given postcode is invalid(configured), then BlackListServiceException thrown")
+    @Test
+    void list_when_invalidAddresses_then_BlackListServiceExceptionThrown() throws IOException, InterruptedException {
+
+        String postcode = "RG14 5BY";
+
+        List<Zone> zones = List.of(new Zone( postcode));
+
+        given(appConfig.isBlackListingEnabled()).willReturn(true);
+
+        given(blackListService.getAll()).willThrow(new BlackListServiceException(postcode));
+
+        thenExceptionOfType(BlackListServiceException.class)
+                .isThrownBy(() -> addressController.list(postcode))
+                .hasFieldOrPropertyWithValue("message", String.format("Error while calling Blacklisting Service for postcode %s",postcode));
+    }
+
+    @DisplayName("list(postcode) - Given postcode is invalid(configured) in caps, then the empty list is returned")
+    @Test
+    void list_when_invalidAddressesInCaps_then_emptyAddressesReturned() throws IOException, InterruptedException {
+
+        List<Zone> zones = List.of(new Zone( "rg14 5by"));
+
+        given(appConfig.isBlackListingEnabled()).willReturn(true);
+
+        given(blackListService.getAll()).willReturn(zones);
+
+        List<Address> actual = addressController.list("RG14 5BY");
+
+        then(actual).isEmpty();
+    }
+
+
+
 }

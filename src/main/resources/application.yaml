@@ -28,3 +28,8 @@ spring:
 server:
   error:
     include-binding-errors: always
+
+addresses:
+  blackListing:
+   enabled: true
+   retry: 3
